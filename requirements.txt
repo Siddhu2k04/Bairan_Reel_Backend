@@ -1,9 +1,11 @@
 flask
 flask-cors
 gunicorn
-moviepy
+moviepy==1.0.3
 numpy
 pillow
 rembg
 imageio
 imageio-ffmpeg
+decorator
+tqdm

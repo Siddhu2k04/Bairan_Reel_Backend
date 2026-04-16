@@ -35,7 +35,9 @@ def upload():
     from PIL import Image, ImageFilter
     import numpy as np
 
-    file = request.files["video"]
+    
+    if "video" not in request.files:
+        return jsonify({"error": "No video file sent"}), 400
 
     input_path = os.path.join(UPLOAD_FOLDER, file.filename)
 
@@ -132,7 +134,8 @@ def upload():
         })
 
     except Exception as e:
-        print("ERROR:", str(e))
+        import traceback
+        print(traceback.format_exc())
         return jsonify({"error": str(e)})
 
 
