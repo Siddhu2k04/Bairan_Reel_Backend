@@ -8,5 +8,5 @@ imageio
 imageio-ffmpeg
 decorator
 tqdm
-rembg
+rembg[cpu]
 onnxruntime
