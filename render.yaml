@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: reel-backend
+    runtime: python
+    buildCommand: ""
+    startCommand: python app.py
