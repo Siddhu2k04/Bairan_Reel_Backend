@@ -5,3 +5,5 @@ rembg
 Pillow
 numpy
 imageio-ffmpeg
+flask
+gunicorn
