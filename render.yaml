@@ -1,6 +1,6 @@
 services:
   - type: web
     name: reel-backend
-    runtime: python
-    buildCommand: ""
-    startCommand: python app.py
+    env: python
+    buildCommand: apt-get update && apt-get install -y ffmpeg && pip install -r requirements.txt
+    startCommand: gunicorn app:app
