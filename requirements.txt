@@ -1,9 +1,8 @@
-Flask
+flask
 flask-cors
 moviepy
 rembg
 Pillow
 numpy
 imageio-ffmpeg
-flask
 gunicorn
