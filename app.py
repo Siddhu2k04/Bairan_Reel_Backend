@@ -18,11 +18,9 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 def home():
     return "Backend Running ✅"
 
-
 @app.route("/upload", methods=["POST"])
 def upload():
 
-    # 👉 heavy imports moved inside to avoid Render crash
     from moviepy.editor import (
         VideoFileClip,
         AudioFileClip,
@@ -35,9 +33,14 @@ def upload():
     from PIL import Image, ImageFilter
     import numpy as np
 
-    
+    # ✅ FIX 1: get file properly
     if "video" not in request.files:
         return jsonify({"error": "No video file sent"}), 400
+
+    file = request.files["video"]
+
+    if file.filename == "":
+        return jsonify({"error": "Empty filename"}), 400
 
     input_path = os.path.join(UPLOAD_FOLDER, file.filename)
 
@@ -53,17 +56,14 @@ def upload():
 
         total_duration = 14
 
-        # 🎬 PART 1 (0–4 sec)
         part1 = clip.subclip(0, min(4, clip.duration))
         part1 = part1.resize((720, 1280))
 
-        # 🎬 PART 2
         part2_duration = total_duration - part1.duration
 
         frame = clip.get_frame(min(4, clip.duration - 0.1))
         img = Image.fromarray(frame)
 
-        # remove background
         cutout = remove(img)
         cutout_np = np.array(cutout)
 
@@ -81,12 +81,6 @@ def upload():
         freeze = ImageClip(final_img).set_duration(part2_duration)
         freeze = freeze.resize(height=850)
 
-        freeze = freeze.set_position(lambda t: (
-            180 + 5 * np.sin(15 * t),
-            260 + 5 * np.sin(18 * t)
-        ))
-
-        # background video
         bg = VideoFileClip(os.path.join(ASSET_FOLDER, "bg.mp4"))
         bg = bg.loop(duration=part2_duration)
         bg = bg.resize((720, 1280))
@@ -127,8 +121,6 @@ def upload():
 
         final.write_videofile(output_path, fps=24)
 
-        print("Done:", filename)
-
         return jsonify({
             "url": request.host_url + "download/" + filename
         })
@@ -136,7 +128,7 @@ def upload():
     except Exception as e:
         import traceback
         print(traceback.format_exc())
-        return jsonify({"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/download/<filename>")
